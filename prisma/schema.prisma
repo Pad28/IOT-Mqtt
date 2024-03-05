@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  usuario  String @unique @db.VarChar(30)
+  password String @db.VarChar(100)
+
+  fk_evento Eventos[]
+}
+
+model Dispositivo {
+  id    String @id @default(uuid())
+  alias String @unique @db.VarChar(20)
+
+  fk_evento Eventos[]
+}
+
+model Eventos {
+  id         String   @id @default(uuid())
+  fecha_hora DateTime @db.DateTime()
+
+  id_user String
+  fk_user User   @relation(fields: [id_user], references: [id], onDelete: Cascade)
+
+  id_dispositvo  String
+  fk_dispositivo Dispositivo @relation(fields: [id_dispositvo], references: [id], onDelete: Cascade)
+}
