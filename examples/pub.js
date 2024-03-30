@@ -1,8 +1,8 @@
 const mqtt = require('mqtt');
 
-const pub = mqtt.connect('mqtt://localhost:9090');
+const pub = mqtt.connect('mqtt://localhost:8083');
 
 pub.on('connect', (packet) => {
-    pub.publish('state_foco', `Estado del foco: ${ process.argv[2] }`);
+    pub.publish('state_foco', '1');
     pub.end();
 })
