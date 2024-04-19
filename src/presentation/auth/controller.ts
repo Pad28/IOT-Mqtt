@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppController } from "../controller";
-import { LoginUserDto } from "../../domain";
+import { LoginCerraduraDto, LoginUserDto } from "../../domain";
 import { AuthService } from "../services";
 
 export class AuthController extends AppController{
@@ -13,6 +13,14 @@ export class AuthController extends AppController{
         if(error || !loginUserDto) return res.status(400).json({ error });
         this.authService.loginUser(loginUserDto)
             .then(user => res.json(user))
+            .catch(error => this.triggerError(error, res));
+    }
+
+    public cerradura = (req: Request, res: Response) => {
+        const [error, loginCerraduraDto] = LoginCerraduraDto.create(req.body);
+        if(error || !loginCerraduraDto) return res.status(400).json({ error });
+        this.authService.loginCerradura(loginCerraduraDto)
+            .then(result => res.json(result))
             .catch(error => this.triggerError(error, res));
     }
 

@@ -11,6 +11,7 @@ export class AuthRoutes {
         );
 
         router.post('/login', controller.loginUser);
+        router.post('/cerradura', controller.cerradura);
         
         router.post('/verify-jwt', [
             AuthMiddleware.validateUserJwt

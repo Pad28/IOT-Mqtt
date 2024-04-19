@@ -1,6 +1,6 @@
 import { prisma } from "../../data";
 import { JwtAdapter, cryptjsAdapter } from "../../config";
-import { CustomError, LoginUserDto } from "../../domain";
+import { CustomError, LoginCerraduraDto, LoginUserDto } from "../../domain";
 
 export class AuthService {
     constructor() {}
@@ -21,5 +21,20 @@ export class AuthService {
             user: data,
             token,
         }
+    }
+
+    public async loginCerradura(loginCerradura: LoginCerraduraDto) {
+        const { dispositivo } = prisma;
+        const cerradura = await dispositivo.findUnique({ where: { alias: "cerradura" } });
+        if(!cerradura) throw CustomError.internalServerError("Cerradura no registrada");
+        const isMatch = cerradura.clave === loginCerradura.clave;
+        if(!isMatch) throw CustomError.badRequest("Clave no valida");
+
+        await dispositivo.update({
+            where: { alias: "cerradura" },
+            data: { estado: "ABIERTA" }
+        });
+
+        return { msg: "Cerradura desbloqueada" };
     }
 }
