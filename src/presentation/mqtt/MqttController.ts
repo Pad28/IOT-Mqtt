@@ -18,9 +18,9 @@ export class MqttController {
                             return;
                         }
                         const device = await prisma.dispositivo.findUnique({ where: { alias: "cerradura" } });
-                        if(!device || device.clave !== password) {
+                        // if(!device || device.clave !== password) {
                             // this.mqtt.on()
-                        }
+                        // }
                         
                     }
                 });
