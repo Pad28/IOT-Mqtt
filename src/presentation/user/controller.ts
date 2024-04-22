@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppController } from "../controller";
-import { CreateUserDto } from "../../domain";
+import { CreateUserDto, UpdareUserDto } from "../../domain";
 import { UserService } from "../services";
 
 export class UserController extends AppController {
@@ -15,5 +15,11 @@ export class UserController extends AppController {
             .then(user => res.json({ user }))
             .catch(error => this.triggerError(error, res));        
     };
+
+    public updateUser = (req: Request, res: Response) => {
+        const [error, updateUserDto] = UpdareUserDto.create(req.body);
+        if(error || !updateUserDto) return res.status(400).json({ error });
+        
+    }
 
 }

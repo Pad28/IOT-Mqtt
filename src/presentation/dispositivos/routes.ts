@@ -11,7 +11,7 @@ export class DispositivosRoutes {
         );
 
         router.get('/estados', [
-            AuthMiddleware.validateUserJwt
+            // AuthMiddleware.validateUserJwt
         ], controller.getEstados);
 
         return router;

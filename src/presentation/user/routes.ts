@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { UserController } from "./controller";
 import { UserService } from "../services/user.service";
-import { AuthMiddleware } from "../Middlewares";
 
 export class UserRoutes {
     static get routes(): Router {
@@ -11,8 +10,9 @@ export class UserRoutes {
         );
 
         router.post('/', [
-            AuthMiddleware.validateUserJwt,
         ], controller.createUser);
+
+        router.put("/", controller.updateUser);
 
         return router;
     }

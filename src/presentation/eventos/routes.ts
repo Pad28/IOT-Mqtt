@@ -11,7 +11,6 @@ export class EventosRoutes {
         );
 
         router.get('/', [
-            AuthMiddleware.validateUserJwt
         ], controller.getEventos);
 
         return router;

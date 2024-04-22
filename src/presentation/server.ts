@@ -98,13 +98,15 @@ export class Server {
                     pub.end();
                     const foco = await prisma.dispositivo.findUnique({ where: { alias: "foco" } });
                     if(!foco) throw new Error("Foco no en base de datos");
+                    
                     await Promise.all([
                         prisma.dispositivo.update({
                             where: { id: foco.id },
                             data: { estado: (foco.estado === "APAGADO") ? "ENCENDIDO" : "APAGADO" }
                         }),
+                        
                         prisma.eventos.create({ data: {
-                            fecha_hora: new Date().toISOString(),
+                            fecha_hora: this.generarFechaActual(),
                             id_dispositvo: foco.id,
                             id_user: payload,
                         }}),
@@ -126,7 +128,7 @@ export class Server {
                             data: { estado: (clavija.estado === "APAGADO") ? "ENCENDIDO" : "APAGADO" }
                         }),
                         prisma.eventos.create({ data: {
-                            fecha_hora: new Date().toISOString(),
+                            fecha_hora: this.generarFechaActual(),
                             id_dispositvo: clavija.id,
                             id_user: payload,
                         }}),
@@ -149,7 +151,7 @@ export class Server {
                             data: { estado: (cerradura.estado === "ABIERTA") ? "BLOQUEADA" : "ABIERTA" }
                         }),
                         prisma.eventos.create({ data: {
-                            fecha_hora: new Date().toISOString(),
+                            fecha_hora: this.generarFechaActual(),
                             id_dispositvo: cerradura.id,
                             id_user: payload,
                         }}),
@@ -158,5 +160,18 @@ export class Server {
             });
 
         });        
+    }
+
+    private generarFechaActual() {
+        const fechaActual = new Date();
+
+        const año = fechaActual.getFullYear();
+        const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+        const dia = fechaActual.getDate().toString().padStart(2, '0'); 
+        const hora = fechaActual.getHours().toString().padStart(2, '0'); 
+        const minuto = fechaActual.getMinutes().toString().padStart(2, '0'); 
+        const segundo = fechaActual.getSeconds().toString().padStart(2, '0'); 
+
+        return `${año}-${mes}-${dia}T${hora}:${minuto}:${segundo}.000Z`;
     }
 }

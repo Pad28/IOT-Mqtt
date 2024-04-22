@@ -1,6 +1,6 @@
 import { cryptjsAdapter } from "../../config";
 import { prisma } from "../../data";
-import { CreateUserDto, CustomError } from "../../domain";
+import { CreateUserDto, CustomError, UpdareUserDto } from "../../domain";
 
 export class UserService {
     constructor() {}
@@ -17,5 +17,13 @@ export class UserService {
         }});
 
         return newUser;
+    }
+
+    public async updateUser(updateUserDto: UpdareUserDto) {
+        const { user } = prisma;
+        const data = updateUserDto.values;
+
+        const existUser = await user.findUnique({ where: { id: data.id } });
+        if(!existUser) throw CustomError.badRequest('Usuario no existe');
     }
 }
