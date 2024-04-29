@@ -5,7 +5,7 @@ import{ Server as SocketIOServer} from 'socket.io';
 
 import express, { Application, Router } from 'express';
 import mosca from 'mosca';
-import mqtt from 'mqtt';
+import mqtt, { MqttClient } from 'mqtt';
 import cors from 'cors';
 import compression from 'compression';
 import { prisma } from '../data';
@@ -75,22 +75,6 @@ export class Server {
 
     private async socket() {
         this.webSocket.on('connection', (socket) => {
-
-            const sub = mqtt.connect(`mqtt://localhost:${this.portMqtt}`);
-            sub.on('connect', () => {
-                sub.subscribe('autenticar_cerradura');
-                sub.on('message', async(topic, message) => {
-                    if(topic === "autenticar_cerradura") {
-                        socket.emit("autenticar_cerradura");
-                        await prisma.dispositivo.update({
-                            where: { alias: "cerradura" },
-                            data: { estado: "ABIERTA" }
-                        });
-                    }
-                });
-            });
-
-            
             socket.on("foco", (payload, callback) => {
                 const pub = mqtt.connect('mqtt://localhost:8083');
                 pub.on('connect', async(packet) => {
@@ -159,7 +143,16 @@ export class Server {
                 })
             });
 
-        });        
+        });
+        const sub = mqtt.connect(`mqtt://localhost:${this.portMqtt}`);
+        await sub.subscribeAsync("state_foco");
+        await sub.subscribeAsync("cerradura");
+        await sub.subscribeAsync("calvija");
+        sub.on("message", (topic, message) => {
+            if(topic === "state_foco") this.webSocket.emit("foco", true);
+            if(topic === "cerradura") this.webSocket.emit("cerradura", true);
+            if(topic === "calvija") this.webSocket.emit("calvija", true);
+        });
     }
 
     private generarFechaActual() {
