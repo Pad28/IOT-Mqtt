@@ -13,4 +13,10 @@ export class DispositivosController extends AppController {
             .then(dispositivos => res.json(dispositivos))
             .catch(error => this.triggerError(error, res));
     }
+
+    public getClaves = (req: Request, res: Response) => {
+        this.dispositivosService.getClaves()
+            .then(claves => res.json( claves ))
+            .catch(error => this.triggerError(error, res));
+    }
 }

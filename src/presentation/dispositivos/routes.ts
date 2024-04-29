@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { DispositivosController } from "./controller";
 import { DispositivosService } from "../services";
-import { AuthMiddleware } from "../Middlewares";
 
 export class DispositivosRoutes {
     static get routes(): Router {
@@ -13,6 +12,8 @@ export class DispositivosRoutes {
         router.get('/estados', [
             // AuthMiddleware.validateUserJwt
         ], controller.getEstados);
+
+        router.get("/claves", controller.getClaves);
 
         return router;
     }
