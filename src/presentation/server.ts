@@ -148,7 +148,7 @@ export class Server {
         await sub.subscribeAsync("state_foco");
         await sub.subscribeAsync("cerradura");
         await sub.subscribeAsync("calvija");
-        sub.on("message", (topic, message) => {
+        sub.on("message", (topic) => {
             if(topic === "state_foco") this.webSocket.emit("foco", true);
             if(topic === "cerradura") this.webSocket.emit("cerradura", true);
             if(topic === "calvija") this.webSocket.emit("calvija", true);
@@ -165,6 +165,6 @@ export class Server {
         const minuto = fechaActual.getMinutes().toString().padStart(2, '0'); 
         const segundo = fechaActual.getSeconds().toString().padStart(2, '0'); 
 
-        return `${año}-${mes}-${dia}T${hora}:${minuto}:${segundo}.000Z`;
+        return `${año}-${mes}-git add${dia}T${hora}:${minuto}:${segundo}.000Z`;
     }
 }
