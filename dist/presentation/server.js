@@ -65,19 +65,6 @@ class Server {
     socket() {
         return __awaiter(this, void 0, void 0, function* () {
             this.webSocket.on('connection', (socket) => {
-                const sub = mqtt_1.default.connect(`mqtt://localhost:${this.portMqtt}`);
-                sub.on('connect', () => {
-                    sub.subscribe('autenticar_cerradura');
-                    sub.on('message', (topic, message) => __awaiter(this, void 0, void 0, function* () {
-                        if (topic === "autenticar_cerradura") {
-                            socket.emit("autenticar_cerradura");
-                            yield data_1.prisma.dispositivo.update({
-                                where: { alias: "cerradura" },
-                                data: { estado: "ABIERTA" }
-                            });
-                        }
-                    }));
-                });
                 socket.on("foco", (payload, callback) => {
                     const pub = mqtt_1.default.connect('mqtt://localhost:8083');
                     pub.on('connect', (packet) => __awaiter(this, void 0, void 0, function* () {
@@ -141,6 +128,18 @@ class Server {
                         ]);
                     }));
                 });
+            });
+            const sub = mqtt_1.default.connect(`mqtt://localhost:${this.portMqtt}`);
+            yield sub.subscribeAsync("state_foco");
+            yield sub.subscribeAsync("cerradura");
+            yield sub.subscribeAsync("calvija");
+            sub.on("message", (topic, message) => {
+                if (topic === "state_foco")
+                    this.webSocket.emit("foco", true);
+                if (topic === "cerradura")
+                    this.webSocket.emit("cerradura", true);
+                if (topic === "calvija")
+                    this.webSocket.emit("calvija", true);
             });
         });
     }
