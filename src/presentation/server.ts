@@ -74,7 +74,7 @@ export class Server {
         const broker = new mosca.Server({ port: this.portMqtt });
         broker.on('ready', () => {
             console.log(`Broker MQTT en puerto ${this.portMqtt}`);
-            // broker.on("clientConnected", (client: mosca.Client) => console.log("Cliente: " + client.id));
+            broker.on("clientConnected", (client: mosca.Client) => console.log("Cliente: " + client.id));
             broker.on("published", (packet, client) => {
                 if(packet.topic === "loading") this.webSocket.emit("loading", packet.payload.toString());
             });
