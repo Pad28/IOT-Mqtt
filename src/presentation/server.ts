@@ -193,7 +193,7 @@ export class Server {
         await sub.subscribeAsync("state_foco_on");
         await sub.subscribeAsync("cerradura_on");
         await sub.subscribeAsync("calvija_on");
-        sub.on("message", async(topic) => {
+        sub.on("message", async(topic, message) => {
             switch (topic) {
                 case "state_foco_on":
                     await prisma.dispositivo.update({ where:{ alias: "foco" }, data: { estado: "ENCENDIDO" } });
@@ -206,6 +206,7 @@ export class Server {
                     this.webSocket.emit("cerradura", true);
                     break;
                 case "clavija_on":
+                    console.log(message.toString());
                     await prisma.dispositivo.update({ where:{ alias: "clavija" }, data: { estado: "ENCENDIDO" } });
                     this.map.set("clavija_on", "ok");
                     this.webSocket.emit("calvija", true);
