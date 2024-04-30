@@ -82,7 +82,7 @@ export class Server {
             broker.on("subscribed", (topic: string, client) => {
                 if(topic === "state_foco") this.map.set(client.id, "foco");
                 if(topic === "cerradura") this.map.set(client.id, "cerradura");
-                if(topic === "calvija") this.map.set(client.id, "clavija");
+                if(topic === "clavija") this.map.set(client.id, "clavija");
             });
 
             broker.on("clientDisconnected", (client: mosca.Client) => {
@@ -209,7 +209,7 @@ export class Server {
                     console.log(message.toString());
                     await prisma.dispositivo.update({ where:{ alias: "clavija" }, data: { estado: "ENCENDIDO" } });
                     this.map.set("clavija_on", "ok");
-                    this.webSocket.emit("calvija", true);
+                    this.webSocket.emit("clavija", true);
                     break;
                 default:
                     break;
