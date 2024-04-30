@@ -17,7 +17,8 @@ class EventosService {
         return __awaiter(this, void 0, void 0, function* () {
             const { eventos } = data_1.prisma;
             return yield eventos.findMany({
-                include: { fk_dispositivo: true, fk_user: true }
+                include: { fk_dispositivo: true, fk_user: true },
+                orderBy: { fecha_hora: "desc" }
             });
         });
     }

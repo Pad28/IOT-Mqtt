@@ -6,7 +6,8 @@ export class EventosService {
     public async getEventos() {
         const { eventos } = prisma;
         return await eventos.findMany({
-            include:{ fk_dispositivo: true, fk_user: true }
+            include:{ fk_dispositivo: true, fk_user: true },
+            orderBy: { fecha_hora: "desc" }
         });
     }
 }
