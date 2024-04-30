@@ -32,6 +32,7 @@ class Server {
         this.routes = routes;
         this.server = (0, http_1.createServer)(this.app);
         this.webSocket = new socket_io_1.Server(this.server);
+        this.map = new Map();
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -50,8 +51,8 @@ class Server {
             this.server.listen(this.portApi, () => {
                 console.log(`Servidor escuchando en el puerto ${this.portApi}`);
             });
-            this.mqttConfig();
             this.socket();
+            this.mqttConfig();
         });
     }
     mqttConfig() {
@@ -59,12 +60,50 @@ class Server {
             const broker = new mosca_1.default.Server({ port: this.portMqtt });
             broker.on('ready', () => {
                 console.log(`Broker MQTT en puerto ${this.portMqtt}`);
+                // broker.on("clientConnected", (client: mosca.Client) => console.log("Cliente: " + client.id));
+                broker.on("published", (packet, client) => {
+                    if (packet.topic === "loading")
+                        this.webSocket.emit("loading", packet.payload.toString());
+                });
+                broker.on("subscribed", (topic, client) => {
+                    if (topic === "state_foco")
+                        this.map.set(client.id, "foco");
+                    if (topic === "cerradura")
+                        this.map.set(client.id, "cerradura");
+                    if (topic === "calvija")
+                        this.map.set(client.id, "clavija");
+                });
+                broker.on("clientDisconnected", (client) => {
+                    console.log("Disconected " + client.id);
+                    const dispositivo = this.map.get(client.id);
+                    if (dispositivo === "foco") {
+                        this.map.delete("state_foco_on");
+                        this.webSocket.emit("foco", false);
+                    }
+                    if (dispositivo === "cerradura") {
+                        this.map.delete("cerradura_on");
+                        this.webSocket.emit("cerradura", false);
+                    }
+                    if (dispositivo === "clavija") {
+                        this.map.delete("clavija_on");
+                        this.webSocket.emit("clavija", false);
+                    }
+                });
             });
         });
     }
     socket() {
         return __awaiter(this, void 0, void 0, function* () {
             this.webSocket.on('connection', (socket) => {
+                if (this.map.has("state_foco_on")) {
+                    this.webSocket.emit("foco", true);
+                }
+                if (this.map.has("clavija_on")) {
+                    this.webSocket.emit("clavija", true);
+                }
+                if (this.map.has("cerradura_on")) {
+                    this.webSocket.emit("cerradura", true);
+                }
                 socket.on("foco", (payload, callback) => {
                     const pub = mqtt_1.default.connect('mqtt://localhost:8083');
                     pub.on('connect', (packet) => __awaiter(this, void 0, void 0, function* () {
@@ -89,7 +128,7 @@ class Server {
                 socket.on("clavija", (payload, callback) => {
                     const pub = mqtt_1.default.connect('mqtt://localhost:8083');
                     pub.on('connect', (packet) => __awaiter(this, void 0, void 0, function* () {
-                        pub.publish('clavija', process.argv[2]);
+                        pub.publish('clavija', "");
                         pub.end();
                         const clavija = yield data_1.prisma.dispositivo.findUnique({ where: { alias: "clavija" } });
                         if (!clavija)
@@ -130,17 +169,30 @@ class Server {
                 });
             });
             const sub = mqtt_1.default.connect(`mqtt://localhost:${this.portMqtt}`);
-            yield sub.subscribeAsync("state_foco");
-            yield sub.subscribeAsync("cerradura");
-            yield sub.subscribeAsync("calvija");
-            sub.on("message", (topic) => {
-                if (topic === "state_foco")
-                    this.webSocket.emit("foco", true);
-                if (topic === "cerradura")
-                    this.webSocket.emit("cerradura", true);
-                if (topic === "calvija")
-                    this.webSocket.emit("calvija", true);
-            });
+            yield sub.subscribeAsync("state_foco_on");
+            yield sub.subscribeAsync("cerradura_on");
+            yield sub.subscribeAsync("calvija_on");
+            sub.on("message", (topic) => __awaiter(this, void 0, void 0, function* () {
+                switch (topic) {
+                    case "state_foco_on":
+                        yield data_1.prisma.dispositivo.update({ where: { alias: "foco" }, data: { estado: "ENCENDIDO" } });
+                        this.map.set("state_foco_on", "ok");
+                        this.webSocket.emit("foco", true);
+                        break;
+                    case "cerradura_on":
+                        yield data_1.prisma.dispositivo.update({ where: { alias: "cerradura" }, data: { estado: "BLOQUEADA" } });
+                        this.map.set("cerradura_on", "ok");
+                        this.webSocket.emit("cerradura", true);
+                        break;
+                    case "clavija_on":
+                        yield data_1.prisma.dispositivo.update({ where: { alias: "clavija" }, data: { estado: "ENCENDIDO" } });
+                        this.map.set("clavija_on", "ok");
+                        this.webSocket.emit("calvija", true);
+                        break;
+                    default:
+                        break;
+                }
+            }));
         });
     }
     generarFechaActual() {
@@ -151,7 +203,7 @@ class Server {
         const hora = fechaActual.getHours().toString().padStart(2, '0');
         const minuto = fechaActual.getMinutes().toString().padStart(2, '0');
         const segundo = fechaActual.getSeconds().toString().padStart(2, '0');
-        return `${año}-${mes}-git add${dia}T${hora}:${minuto}:${segundo}.000Z`;
+        return `${año}-${mes}-${dia}T${hora}:${minuto}:${segundo}.000Z`;
     }
 }
 exports.Server = Server;
