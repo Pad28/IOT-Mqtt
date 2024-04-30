@@ -70,7 +70,7 @@ class Server {
                         this.map.set(client.id, "foco");
                     if (topic === "cerradura")
                         this.map.set(client.id, "cerradura");
-                    if (topic === "calvija")
+                    if (topic === "clavija")
                         this.map.set(client.id, "clavija");
                 });
                 broker.on("clientDisconnected", (client) => {
@@ -171,8 +171,8 @@ class Server {
             const sub = mqtt_1.default.connect(`mqtt://localhost:${this.portMqtt}`);
             yield sub.subscribeAsync("state_foco_on");
             yield sub.subscribeAsync("cerradura_on");
-            yield sub.subscribeAsync("calvija_on");
-            sub.on("message", (topic) => __awaiter(this, void 0, void 0, function* () {
+            yield sub.subscribeAsync("clavija_on");
+            sub.on("message", (topic, message) => __awaiter(this, void 0, void 0, function* () {
                 switch (topic) {
                     case "state_foco_on":
                         yield data_1.prisma.dispositivo.update({ where: { alias: "foco" }, data: { estado: "ENCENDIDO" } });
@@ -185,9 +185,10 @@ class Server {
                         this.webSocket.emit("cerradura", true);
                         break;
                     case "clavija_on":
+                        console.log(message.toString());
                         yield data_1.prisma.dispositivo.update({ where: { alias: "clavija" }, data: { estado: "ENCENDIDO" } });
                         this.map.set("clavija_on", "ok");
-                        this.webSocket.emit("calvija", true);
+                        this.webSocket.emit("clavija", true);
                         break;
                     default:
                         break;
