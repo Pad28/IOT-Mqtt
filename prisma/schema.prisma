@@ -27,6 +27,7 @@ model Dispositivo {
 model Eventos {
   id         String   @id @default(uuid())
   fecha_hora DateTime @db.DateTime()
+  accion     String
 
   id_user String
   fk_user User   @relation(fields: [id_user], references: [id], onDelete: Cascade)

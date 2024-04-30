@@ -138,6 +138,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: foco.id,
                             id_user: payload,
+                            accion: foco.estado,
                         }}),
                     ]);
                 })
@@ -160,6 +161,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: clavija.id,
                             id_user: payload,
+                            accion: clavija.estado,
                         }}),
                     ]);
                 })
@@ -183,6 +185,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: cerradura.id,
                             id_user: payload,
+                            accion: cerradura.estado,
                         }}),
                     ]);
                 })
