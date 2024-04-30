@@ -19,3 +19,4 @@ __exportStar(require("./dtos/user/create-user.dto"), exports);
 __exportStar(require("./dtos/auth/login-user.dto"), exports);
 __exportStar(require("./dtos/auth/login-cerradura.dto"), exports);
 __exportStar(require("./dtos/user/update-user.dto"), exports);
+__exportStar(require("./dtos/dispositivo/update-clave.dto"), exports);

@@ -25,5 +25,14 @@ export class UserService {
 
         const existUser = await user.findUnique({ where: { id: data.id } });
         if(!existUser) throw CustomError.badRequest('Usuario no existe');
+
+        if(data.password) {
+            data.password = cryptjsAdapter.hash(data.password);
+        }
+
+        return await user.update({
+            where: { id: updateUserDto.id },
+            data
+        });
     }
 }

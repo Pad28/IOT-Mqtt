@@ -60,11 +60,27 @@ class Server {
             const broker = new mosca_1.default.Server({ port: this.portMqtt });
             broker.on('ready', () => {
                 console.log(`Broker MQTT en puerto ${this.portMqtt}`);
-                broker.on("clientConnected", (client) => console.log("Cliente: " + client.id));
-                broker.on("published", (packet, client) => {
+                // broker.on("clientConnected", (client: mosca.Client) => console.log("Cliente: " + client.id));
+                broker.on("published", (packet, client) => __awaiter(this, void 0, void 0, function* () {
                     if (packet.topic === "loading")
                         this.webSocket.emit("loading", packet.payload.toString());
-                });
+                    if (packet.topic === "autenticar_cerradura") {
+                        const estado = yield data_1.prisma.dispositivo.findFirst({ where: { alias: "cerradura" } });
+                        if (!estado)
+                            return;
+                        yield data_1.prisma.dispositivo.update({
+                            where: { alias: "cerradura" },
+                            data: { estado: !(estado.estado === "ABIERTA") ? "ABIERTA" : "BLOQUEADA" }
+                        });
+                        this.webSocket.emit("autenticar_cerradura", true);
+                        const pub = mqtt_1.default.connect('mqtt://localhost:8083');
+                        pub.on("connect", () => {
+                            pub.publish("cerradura", "");
+                            pub.end();
+                        });
+                    }
+                    ;
+                }));
                 broker.on("subscribed", (topic, client) => {
                     if (topic === "state_foco")
                         this.map.set(client.id, "foco");
@@ -74,17 +90,16 @@ class Server {
                         this.map.set(client.id, "clavija");
                 });
                 broker.on("clientDisconnected", (client) => {
-                    console.log("Disconected " + client.id);
                     const dispositivo = this.map.get(client.id);
                     if (dispositivo === "foco") {
                         this.map.delete("state_foco_on");
                         this.webSocket.emit("foco", false);
                     }
-                    if (dispositivo === "cerradura") {
+                    else if (dispositivo === "cerradura") {
                         this.map.delete("cerradura_on");
                         this.webSocket.emit("cerradura", false);
                     }
-                    if (dispositivo === "clavija") {
+                    else if (dispositivo === "clavija") {
                         this.map.delete("clavija_on");
                         this.webSocket.emit("clavija", false);
                     }
@@ -188,7 +203,6 @@ class Server {
                         this.webSocket.emit("cerradura", true);
                         break;
                     case "clavija_on":
-                        console.log(message.toString());
                         yield data_1.prisma.dispositivo.update({ where: { alias: "clavija" }, data: { estado: "ENCENDIDO" } });
                         this.map.set("clavija_on", "ok");
                         this.webSocket.emit("clavija", true);

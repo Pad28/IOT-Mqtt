@@ -14,6 +14,8 @@ export class DispositivosRoutes {
         ], controller.getEstados);
 
         router.get("/claves", controller.getClaves);
+ 
+        router.put("/claves", controller.putClaves);
 
         return router;
     }

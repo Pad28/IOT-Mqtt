@@ -19,6 +19,9 @@ class UserController extends controller_1.AppController {
             const [error, updateUserDto] = domain_1.UpdareUserDto.create(req.body);
             if (error || !updateUserDto)
                 return res.status(400).json({ error });
+            this.userService.updateUser(updateUserDto)
+                .then(user => res.json(user))
+                .catch(error => this.triggerError(error, res));
         };
     }
 }

@@ -45,6 +45,13 @@ class UserService {
             const existUser = yield user.findUnique({ where: { id: data.id } });
             if (!existUser)
                 throw domain_1.CustomError.badRequest('Usuario no existe');
+            if (data.password) {
+                data.password = config_1.cryptjsAdapter.hash(data.password);
+            }
+            return yield user.update({
+                where: { id: updateUserDto.id },
+                data
+            });
         });
     }
 }

@@ -22,7 +22,6 @@ class UpdareUserDto {
             validators.requiredKeys("id");
             validators.isUIID("id");
             validators.ifExistCapitalizar("usuario");
-            validators.isString("password");
             const { id, usuario, password } = object;
             return [undefined, new UpdareUserDto(id, usuario, password)];
         }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppController } from "../controller";
 import { DispositivosService } from "../services";
+import { UpdateClaveDto } from "../../domain";
 
 
 export class DispositivosController extends AppController {
@@ -16,6 +17,15 @@ export class DispositivosController extends AppController {
 
     public getClaves = (req: Request, res: Response) => {
         this.dispositivosService.getClaves()
+            .then(claves => res.json( claves ))
+            .catch(error => this.triggerError(error, res));
+    }
+
+    public putClaves = (req: Request, res: Response) => {
+        const [error, updateDto] = UpdateClaveDto.create(req.body);
+        if(error || !updateDto) return res.status(400).json({ error });
+
+        this.dispositivosService.putClaves({ ...req.body })
             .then(claves => res.json( claves ))
             .catch(error => this.triggerError(error, res));
     }

@@ -1,4 +1,5 @@
 import { prisma } from "../../data";
+import { UpdateClaveDto } from "../../domain";
 
 
 export class DispositivosService {
@@ -12,5 +13,13 @@ export class DispositivosService {
     public async getClaves() {
         const { dispositivo } = prisma;
         return await dispositivo.findMany({ where: { alias: "cerradura" }, select:{ clave: true } });
+    }
+
+    public async putClaves(updateClaveDto: UpdateClaveDto) {
+        const { dispositivo } = prisma;
+        return await dispositivo.update({ 
+            where: { alias: "cerradura" }, 
+            data: { clave: updateClaveDto.clave } }
+        );
     }
 }
