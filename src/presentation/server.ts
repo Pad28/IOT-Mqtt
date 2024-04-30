@@ -138,7 +138,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: foco.id,
                             id_user: payload,
-                            accion: foco.estado,
+                            accion: (foco.estado === "APAGADO") ? "ENCENDIDO" : "APAGADO",
                         }}),
                     ]);
                 })
@@ -161,7 +161,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: clavija.id,
                             id_user: payload,
-                            accion: clavija.estado,
+                            accion: (clavija.estado === "APAGADO") ? "ENCENDIDO" : "APAGADO",
                         }}),
                     ]);
                 })
@@ -185,7 +185,7 @@ export class Server {
                             fecha_hora: this.generarFechaActual(),
                             id_dispositvo: cerradura.id,
                             id_user: payload,
-                            accion: cerradura.estado,
+                            accion: (cerradura.estado === "ABIERTA") ? "BLOQUEADA" : "ABIERTA",
                         }}),
                     ]);
                 })
