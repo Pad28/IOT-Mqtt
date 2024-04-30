@@ -192,7 +192,7 @@ export class Server {
         const sub = mqtt.connect(`mqtt://localhost:${this.portMqtt}`);
         await sub.subscribeAsync("state_foco_on");
         await sub.subscribeAsync("cerradura_on");
-        await sub.subscribeAsync("calvija_on");
+        await sub.subscribeAsync("clavija_on");
         sub.on("message", async(topic, message) => {
             switch (topic) {
                 case "state_foco_on":
