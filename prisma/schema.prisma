@@ -16,10 +16,11 @@ model User {
 }
 
 model Dispositivo {
-  id     String @id @default(uuid())
-  alias  String @unique @db.VarChar(20)
-  estado String @db.VarChar(20)
-  clave  Int?
+  id          String @id @default(uuid())
+  alias       String @unique @db.VarChar(20)
+  estado      String @db.VarChar(20)
+  clave       Int?
+  claveHuella Int?
 
   fk_evento Eventos[]
 }

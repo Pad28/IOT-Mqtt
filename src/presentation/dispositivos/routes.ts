@@ -17,6 +17,9 @@ export class DispositivosRoutes {
  
         router.put("/claves", controller.putClaves);
 
+        router.get("/huella", controller.getHuella);
+
+
         return router;
     }
 }

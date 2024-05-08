@@ -15,6 +15,11 @@ export class DispositivosService {
         return await dispositivo.findMany({ where: { alias: "cerradura" }, select:{ clave: true } });
     }
 
+    public async getHuella() {
+        const { dispositivo } = prisma;
+        return await dispositivo.findMany({ where: { alias: "cerradura" }, select:{ claveHuella: true } });
+    }
+
     public async putClaves(updateClaveDto: UpdateClaveDto) {
         const { dispositivo } = prisma;
         return await dispositivo.update({ 

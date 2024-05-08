@@ -21,6 +21,12 @@ export class DispositivosController extends AppController {
             .catch(error => this.triggerError(error, res));
     }
 
+    public getHuella = (req: Request, res: Response) => {
+        this.dispositivosService.getHuella()
+            .then(claves => res.json( claves ))
+            .catch(error => this.triggerError(error, res));
+    }
+
     public putClaves = (req: Request, res: Response) => {
         const [error, updateDto] = UpdateClaveDto.create(req.body);
         if(error || !updateDto) return res.status(400).json({ error });
