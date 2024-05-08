@@ -25,6 +25,12 @@ class DispositivosService {
             return yield dispositivo.findMany({ where: { alias: "cerradura" }, select: { clave: true } });
         });
     }
+    getHuella() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { dispositivo } = data_1.prisma;
+            return yield dispositivo.findMany({ where: { alias: "cerradura" }, select: { claveHuella: true } });
+        });
+    }
     putClaves(updateClaveDto) {
         return __awaiter(this, void 0, void 0, function* () {
             const { dispositivo } = data_1.prisma;

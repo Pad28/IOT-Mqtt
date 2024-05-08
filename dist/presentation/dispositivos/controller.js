@@ -17,6 +17,11 @@ class DispositivosController extends controller_1.AppController {
                 .then(claves => res.json(claves))
                 .catch(error => this.triggerError(error, res));
         };
+        this.getHuella = (req, res) => {
+            this.dispositivosService.getHuella()
+                .then(claves => res.json(claves))
+                .catch(error => this.triggerError(error, res));
+        };
         this.putClaves = (req, res) => {
             const [error, updateDto] = domain_1.UpdateClaveDto.create(req.body);
             if (error || !updateDto)

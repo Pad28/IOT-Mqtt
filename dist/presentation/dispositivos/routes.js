@@ -13,6 +13,7 @@ class DispositivosRoutes {
         ], controller.getEstados);
         router.get("/claves", controller.getClaves);
         router.put("/claves", controller.putClaves);
+        router.get("/huella", controller.getHuella);
         return router;
     }
 }
