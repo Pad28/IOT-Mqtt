@@ -12,6 +12,7 @@ export class AuthRoutes {
 
         router.post('/login', controller.loginUser);
         router.post('/cerradura', controller.cerradura);
+        router.post('/agregar-huella', controller.loginAgregarHuella);
         
         router.post('/verify-jwt', [
             AuthMiddleware.validateUserJwt

@@ -11,6 +11,7 @@ class AuthRoutes {
         const controller = new controller_1.AuthController(new services_1.AuthService());
         router.post('/login', controller.loginUser);
         router.post('/cerradura', controller.cerradura);
+        router.post('/agregar-huella', controller.loginAgregarHuella);
         router.post('/verify-jwt', [
             Middlewares_1.AuthMiddleware.validateUserJwt
         ], controller.verifyToken);
