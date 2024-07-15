@@ -22,7 +22,10 @@ class DispositivosService {
     getClaves() {
         return __awaiter(this, void 0, void 0, function* () {
             const { dispositivo } = data_1.prisma;
-            return yield dispositivo.findMany({ where: { alias: "cerradura" }, select: { clave: true, claveHuella: true } });
+            return yield dispositivo.findMany({
+                where: { alias: "cerradura" },
+                select: { clave: true, claveHuella: true }
+            });
         });
     }
     getHuella() {
