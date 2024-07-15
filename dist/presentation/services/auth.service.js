@@ -61,5 +61,17 @@ class AuthService {
             return { msg: "Cerradura desbloqueada" };
         });
     }
+    loginAgregarHuella(huellaDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { dispositivo } = data_1.prisma;
+            const cerradura = yield dispositivo.findUnique({ where: { alias: "cerradura" } });
+            if (!cerradura)
+                throw domain_1.CustomError.internalServerError("Cerradura no registrada");
+            const isMatch = cerradura.claveHuella === huellaDto.clave;
+            if (!isMatch)
+                throw domain_1.CustomError.badRequest("Clave no valida");
+            return { msg: "Huella desbloqueada" };
+        });
+    }
 }
 exports.AuthService = AuthService;

@@ -14,9 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./errors/custom.error"), exports);
-__exportStar(require("./dtos/user/create-user.dto"), exports);
 __exportStar(require("./dtos/auth/login-user.dto"), exports);
+__exportStar(require("./dtos/user/create-user.dto"), exports);
+__exportStar(require("./errors/custom.error"), exports);
+__exportStar(require("./dtos/auth/agregar-huella.dto"), exports);
 __exportStar(require("./dtos/auth/login-cerradura.dto"), exports);
-__exportStar(require("./dtos/user/update-user.dto"), exports);
 __exportStar(require("./dtos/dispositivo/update-clave.dto"), exports);
+__exportStar(require("./dtos/user/update-user.dto"), exports);

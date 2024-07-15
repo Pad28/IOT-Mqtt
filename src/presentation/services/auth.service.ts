@@ -1,6 +1,6 @@
 import { prisma } from "../../data";
 import { JwtAdapter, cryptjsAdapter } from "../../config";
-import { CustomError, LoginCerraduraDto, LoginUserDto } from "../../domain";
+import { AgregarHuellaDto, CustomError, LoginCerraduraDto, LoginUserDto } from "../../domain";
 
 export class AuthService {
     constructor() {}
@@ -36,5 +36,14 @@ export class AuthService {
         });
 
         return { msg: "Cerradura desbloqueada" };
+    }
+
+    public async loginAgregarHuella(huellaDto: AgregarHuellaDto) {
+        const { dispositivo } = prisma;
+        const cerradura = await dispositivo.findUnique({ where: { alias: "cerradura" } });
+        if(!cerradura) throw CustomError.internalServerError("Cerradura no registrada");
+        const isMatch = cerradura.claveHuella === huellaDto.clave;
+        if(!isMatch) throw CustomError.badRequest("Clave no valida");
+        return { msg: "Huella desbloqueada" };
     }
 }

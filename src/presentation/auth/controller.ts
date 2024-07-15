@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppController } from "../controller";
-import { LoginCerraduraDto, LoginUserDto } from "../../domain";
+import { AgregarHuellaDto, LoginCerraduraDto, LoginUserDto } from "../../domain";
 import { AuthService } from "../services";
 
 export class AuthController extends AppController{
@@ -20,6 +20,14 @@ export class AuthController extends AppController{
         const [error, loginCerraduraDto] = LoginCerraduraDto.create(req.body);
         if(error || !loginCerraduraDto) return res.status(400).json({ error });
         this.authService.loginCerradura(loginCerraduraDto)
+            .then(result => res.json(result))
+            .catch(error => this.triggerError(error, res));
+    }
+
+    public loginAgregarHuella = (req: Request, res: Response) => {
+        const [error, huellaDto] = AgregarHuellaDto.create(req.body);
+        if(error || !huellaDto) return res.status(400).json({ error });
+        this.authService.loginAgregarHuella(huellaDto)
             .then(result => res.json(result))
             .catch(error => this.triggerError(error, res));
     }

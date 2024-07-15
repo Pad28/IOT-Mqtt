@@ -23,6 +23,14 @@ class AuthController extends controller_1.AppController {
                 .then(result => res.json(result))
                 .catch(error => this.triggerError(error, res));
         };
+        this.loginAgregarHuella = (req, res) => {
+            const [error, huellaDto] = domain_1.AgregarHuellaDto.create(req.body);
+            if (error || !huellaDto)
+                return res.status(400).json({ error });
+            this.authService.loginAgregarHuella(huellaDto)
+                .then(result => res.json(result))
+                .catch(error => this.triggerError(error, res));
+        };
         this.verifyToken = (req, res) => {
             const token = req.header('Authorization');
             if (!token)
